@@ -16,12 +16,14 @@
 
 package org.springframework.security.facebook;
 
-public class FacebookUserNotConnected extends Exception {
+import org.springframework.security.core.AuthenticationException;
+
+public class FacebookUserNotConnected extends AuthenticationException {
 
 	private static final long serialVersionUID = 1L;
 
 	public FacebookUserNotConnected() {
-		super();
+		super("Unknown Error");
 	}
 
 	public FacebookUserNotConnected(String msg) {
