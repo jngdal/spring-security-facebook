@@ -26,6 +26,7 @@ public class FacebookAuthenticationToken extends AbstractAuthenticationToken {
 	private static final long serialVersionUID = 1L;
 
 	private Long uid;
+    private String sessionkey = null ;
 
 	public FacebookAuthenticationToken() {
 		this(null, null);
@@ -63,4 +64,12 @@ public class FacebookAuthenticationToken extends AbstractAuthenticationToken {
 	public Long getUid() {
 		return uid;
 	}
+
+    public String getSessionkey() {
+        return sessionkey;
+    }
+
+    public void setSessionkey(String sessionkey) {
+        this.sessionkey = sessionkey;
+    }
 }

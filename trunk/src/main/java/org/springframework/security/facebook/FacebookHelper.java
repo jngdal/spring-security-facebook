@@ -19,6 +19,7 @@ package org.springframework.security.facebook;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -39,12 +40,14 @@ public class FacebookHelper {
 
 	private String apiKey;
 	private String secret;
+    private Set<ProfileField> userInfoFields;
+    private Set<String> stringInfoFields;
 
 	protected IFacebookRestClient<Document> getFacebookClient(
-			HttpServletRequest request, HttpServletResponse response)
+			HttpServletRequest request)
 			throws FacebookUserNotConnected {
 
-		String sessionKey = lookupSessionKey(request, response);
+		String sessionKey = lookupSessionKey(request);
 		return new FacebookXmlRestClient(apiKey, secret, sessionKey);
 	}
 
@@ -67,8 +70,7 @@ public class FacebookHelper {
 			HttpServletResponse response, String fql)
 			throws FacebookUserNotConnected {
 
-		IFacebookRestClient<Document> client = getFacebookClient(request,
-				response);
+		IFacebookRestClient<Document> client = getFacebookClient(request);
 
 		Document document = null;
 		try {
@@ -87,8 +89,17 @@ public class FacebookHelper {
 
 		Map<String, String> userInfo = new HashMap<String, String>();
 
+
+        String queryFields = null;
+        if((userInfoFields!=null && userInfoFields.size() > 0) || (stringInfoFields != null && stringInfoFields.size() > 0)){
+            queryFields = constructRequestString();
+        }
+        else{
+            queryFields = "uid, first_name, last_name, proxied_email";
+        }
+
 		Document userInfoDoc = query(request, response,
-				"select uid, first_name, last_name, proxied_email from user where uid in "
+				"select " + queryFields + " from user where uid in "
 						+ uid);
 
 		for (ProfileField pfield : ProfileField.values()) {
@@ -99,9 +110,25 @@ public class FacebookHelper {
 						.put(pfield.fieldName(), nodes.item(0).getTextContent());
 			}
 		}
+        for (String fieldName : stringInfoFields) {
+            NodeList nodes = userInfoDoc.getElementsByTagName(fieldName);
+            userInfo.put(fieldName, nodes.item(0).getTextContent());    
+        }
 
 		return userInfo;
 	}
+    private String constructRequestString(){
+        StringBuffer stringBufferQueryFields = new StringBuffer();
+        for (ProfileField userInfoField : userInfoFields) {
+            if(stringBufferQueryFields.length() > 0)stringBufferQueryFields.append(',');
+            stringBufferQueryFields.append(userInfoField.fieldName());
+        }
+        for (String stringInfoField : stringInfoFields) {
+            if(stringBufferQueryFields.length() > 0)stringBufferQueryFields.append(',');
+            stringBufferQueryFields.append(stringInfoField);
+        }
+        return stringBufferQueryFields.toString();
+    }
 
 	protected void handleFacebookException(HttpServletRequest request,
 			HttpServletResponse response, FacebookException facebookException) {
@@ -119,8 +146,8 @@ public class FacebookHelper {
 		}
 	}
 
-	protected String lookupSessionKey(HttpServletRequest request,
-			HttpServletResponse response) throws FacebookUserNotConnected {
+	protected String lookupSessionKey(HttpServletRequest request
+    ) throws FacebookUserNotConnected {
 
 		if (request.getCookies() != null) {
 			for (Cookie cookie : request.getCookies()) {
@@ -149,4 +176,20 @@ public class FacebookHelper {
 	public void setSecret(String secret) {
 		this.secret = secret;
 	}
+
+    public Set<ProfileField> getUserInfoFields() {
+        return userInfoFields;
+    }
+
+    public void setUserInfoFields(Set<ProfileField> userInfoFields) {
+        this.userInfoFields = userInfoFields;
+    }
+
+    public Set<String> getStringInfoFields() {
+        return stringInfoFields;
+    }
+
+    public void setStringInfoFields(Set<String> stringInfoFields) {
+        this.stringInfoFields = stringInfoFields;
+    }
 }
