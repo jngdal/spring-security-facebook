@@ -53,14 +53,20 @@ public class FacebookGraphAuthenticationToken extends AbstractAuthenticationToke
     public Long getUid() {
         //parse uid from accessToken
         if (uid == null) {
-            uid = parseUIDFromAccessToke(accessToken);
+            uid = parseUIDFromAccessToken(accessToken);
         }
         
         return uid;
     }
+    public void setUid(Long uid) {
+        this.uid = uid;
+    }
 
-    public Long parseUIDFromAccessToke(String accessToken) {
+    public Long parseUIDFromAccessToken(String accessToken) {
         try {
+            if(!accessToken.contains("|")){
+                return null;
+            }
             String uidFragment = accessToken.split("\\|")[1];
             String uidString = uidFragment.split("-")[1];
             Long uidValue = Long.parseLong(uidString);
@@ -85,6 +91,9 @@ public class FacebookGraphAuthenticationToken extends AbstractAuthenticationToke
     }
 
     public void setFacebookParams(Map<String, Object> facebookParams) {
+        if(uid == null && facebookParams.containsKey("id")){
+            uid =  Long.parseLong((String) facebookParams.get("id"));
+        }
         this.facebookParams = facebookParams;
     }
 

@@ -36,8 +36,7 @@ public class FacebookGraphAuthenicationProvider implements AuthenticationProvide
         fbAuthToken.setAccessToken(fbAccessToken);
 
 
-        String graphurl = getGraphRequestURL(fbAuthToken.getUid(),
-                fbAuthToken.getAccessToken());
+        String graphurl = getGraphRequestURL(fbAuthToken.getAccessToken());
         try {
             String body = HttpUtil.getRequest(graphurl);
 
@@ -119,10 +118,10 @@ public class FacebookGraphAuthenicationProvider implements AuthenticationProvide
         return supports;
     }
 
-    public String getGraphRequestURL(long uid, String access_token) {
+    public String getGraphRequestURL(String access_token) {
         Map<String, String> mParams = new HashMap<String, String>();
         mParams.put(FacebookGraphParameters.FACEBOOK_GRAPH_PARAMETER_ACCESS_TOKEN, access_token);
-        return  HttpUtil.generateUrl(FacebookGraphParameters.FACEBOOK_GRAPH_USER_INFO_BASE + Long.toString(uid), mParams);
+        return  HttpUtil.generateUrl(FacebookGraphParameters.FACEBOOK_GRAPH_USER_INFO_ME, mParams);
     }
 
     public String getApplicationID() {

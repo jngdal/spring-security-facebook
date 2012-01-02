@@ -15,6 +15,7 @@ public class FacebookGraphParameters {
     public static final String FACEBOOK_GRAPH_PARAMETER_SCOPE = "scope";
     public static final String FACEBOOK_GRAPH_OAUTH_URL = "https://graph.facebook.com/oauth/authorize";
     public static final String FACEBOOK_GRAPH_USER_INFO_BASE = "https://graph.facebook.com/";
+    public static final String FACEBOOK_GRAPH_USER_INFO_ME = "https://graph.facebook.com/me";
     public static final String FACEBOOK_GRAPH_PARAMETER_ACCESS_TOKEN = "access_token";
 
 }

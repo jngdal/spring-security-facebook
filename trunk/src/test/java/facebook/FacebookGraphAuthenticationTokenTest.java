@@ -26,7 +26,7 @@ public class FacebookGraphAuthenticationTokenTest extends TestCase {
     public void testParseUIDFromAccessToke() {
         FacebookGraphAuthenticationToken token = new FacebookGraphAuthenticationToken();
         String testString = "126153854093012|3c776ea88f8808a563782b4b-1321383876|6ypvwgxdjUHitQJ8NF41HFnvSt8.";
-        Long l = token.parseUIDFromAccessToke(testString);
+        Long l = token.parseUIDFromAccessToken(testString);
         assertEquals(Long.valueOf(1321383876), l);
         System.out.println("Long: " + l);
     }
